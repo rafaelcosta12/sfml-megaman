@@ -11,6 +11,7 @@ protected:
     b2Fixture* fixture;
     sf::Sprite sprite;
     sf::Texture texture;
+    void createShape();
 public:
     ~Scenario1();
     Scenario1(b2World* world, float px, float py);

@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include <iostream>
 #include "imgui.h"
+#include <vector>
 
 Player::Player(b2World* world, float px, float py) : GameObject(world)
 {
@@ -8,14 +9,13 @@ Player::Player(b2World* world, float px, float py) : GameObject(world)
     size[1] = 24 * 0.05f / 2;
 
     name = "Player";
+    
     friction = 0.0f;
     restitution = 0.0f;
-    density = 5.0f;
-    isGrounded = false;
-    jumpForce = 14.5f;
+    density = 10.0f;
+    jumpForce = 14.0f;
 
-    sprite = sf::Sprite();
-    texture = sf::Texture();
+    isGrounded = false;
 
     b2BodyDef bodyDef;
     bodyDef.type = b2BodyType::b2_dynamicBody;
@@ -27,15 +27,37 @@ Player::Player(b2World* world, float px, float py) : GameObject(world)
 
     recreateFixtures();
 
-    std::string filename = "../assets/megaman.png";
-    if (!texture.loadFromFile(filename))
-    {
-        std::cout << "Erro ao abrir textura " + filename << std::endl;
-    }
-    sprite.setTexture(texture, true);
-    sprite.scale(sf::Vector2f(-0.05f, 0.05f));
-    sprite.setTextureRect(sf::IntRect(3, 21, 21, 24));
-    sprite.setOrigin(21/2, 24/2);
+    // animation
+    auto defs = std::map<PlayerAnimation, std::vector<SpriteDef>>();
+    defs.insert(
+        {
+            PlayerAnimation::IDLE,
+            std::vector<SpriteDef>({
+                SpriteDef(sf::IntRect(3, 21, 21, 24), 2.0f),
+                SpriteDef(sf::IntRect(28, 21, 21, 24), 0.25f),
+            }),
+        }
+    );
+    defs.insert(
+        {
+            PlayerAnimation::WALK,
+            std::vector<SpriteDef>({
+                SpriteDef(sf::IntRect(89, 21, 24, 22), 0.15f),
+                SpriteDef(sf::IntRect(114, 21, 24, 24), 0.1f),
+                SpriteDef(sf::IntRect(141, 21, 24, 24), 0.15f),
+                SpriteDef(sf::IntRect(114, 21, 24, 24), 0.1f),
+            }),
+        }
+    );
+    defs.insert(
+        {
+            PlayerAnimation::JUMP,
+            std::vector<SpriteDef>({
+                SpriteDef(sf::IntRect(174, 13, 27, 30), 1.0f),
+            }),
+        }
+    );
+    animation = new Animation<PlayerAnimation>("../assets/megaman.png", PlayerAnimation::IDLE, defs);
 }
 
 Player::~Player()
@@ -60,17 +82,23 @@ void Player::update(float dt, sf::RenderWindow& window)
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
     {
+        animation->setAnimation(PlayerAnimation::WALK);
         desiredVelocity = -maxSpeed;
 
-        if (sprite.getScale().x < 0)
-            sprite.scale(sf::Vector2f(-1, 1));
+        if (animation->getScale().x < 0)
+            animation->invertX();
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
     {
         desiredVelocity = maxSpeed;
+        animation->setAnimation(PlayerAnimation::WALK);
         
-        if (sprite.getScale().x > 0)
-            sprite.scale(sf::Vector2f(-1, 1));
+        if (animation->getScale().x > 0)
+            animation->invertX();
+    }
+    else
+    {
+        animation->setAnimation(PlayerAnimation::IDLE);
     }
 
     float velocityChange = desiredVelocity - velocity.x;
@@ -86,17 +114,23 @@ void Player::update(float dt, sf::RenderWindow& window)
     // pulo
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) && isGrounded)
         body->ApplyLinearImpulse(b2Vec2(0, jumpForce), body->GetWorldCenter(), true);
- 
-    sprite.setPosition(body->GetPosition().x, -body->GetPosition().y);
+    
+    if (!isGrounded)
+        animation->setAnimation(PlayerAnimation::JUMP);
+    
+    // animation
+    animation->update(dt, body);
 }
 
 void Player::render(sf::RenderWindow& window)
 {
-    auto pos = body->GetPosition();
-    
-    window.draw(sprite);
+    // animation
+    animation->render(window);
+
     GameObject::render(window);
 
+    // imgui
+    auto pos = body->GetPosition();
     ImGui::Begin("Player");
     ImGui::Text("Position: (%.3f, %.3f)", pos.x, -pos.y);
     ImGui::Text("Ground Contact: %s", isGrounded ? "true" : "false");

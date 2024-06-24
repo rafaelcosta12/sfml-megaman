@@ -3,13 +3,11 @@
 #include <box2d/box2d.h>
 #include <SFML/Graphics.hpp>
 #include "GameObject.hpp"
+#include "Animation.hpp"
 
 class Player : public GameObject, public b2ContactListener
 {
-private:
-    sf::Sprite sprite;
-    sf::Texture texture;
-    
+private:    
     b2Fixture* groundSensorFixture = NULL;
     b2Fixture* shapeFixture = NULL;
 
@@ -18,8 +16,9 @@ private:
     float restitution;
     float density;
     float size[2];
-
     float jumpForce;
+
+    Animation<PlayerAnimation>* animation;
 protected:
     void recreateFixtures();
 public:

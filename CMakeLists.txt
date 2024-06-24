@@ -13,8 +13,8 @@ add_executable(Example
     src/Box.cpp
     src/Scenario1.cpp
     src/Camera.cpp
-    src/AnimationController.cpp
-    src/PlayerAnimationController.cpp
+    src/SpriteDef.cpp
+    src/Animation.cpp
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
     imgui/imgui_draw.cpp

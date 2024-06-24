@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Tower Defense - Debug",
+            "name": "Megaman - Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/build/Example",
