@@ -36,6 +36,11 @@ void Camera::processEvents(sf::Event event, sf::RenderWindow& window)
         position[1] -= step;
 }
 
+void Camera::setCenter(sf::Vector2f center)
+{
+    position[0] = center.x, position[1] = center.y;
+}
+
 void Camera::render(sf::RenderWindow& window)
 {
     sf::View view;

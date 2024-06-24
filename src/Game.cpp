@@ -17,9 +17,8 @@ Game::Game() : window(sf::VideoMode(800, 600), "Example")
     b2Vec2 gravity(0.0f, -20.0f);
     world = new b2World(gravity);
 
-    gameObjects.push_back(new Scenario1(world, 0,99.2938f+2.0f));
-    gameObjects.push_back(new Camera(world, 5.1, 98));
-    gameObjects.push_back(new Player(world, 4.9875f, 97.3125f));
+    auto player = new Player(world, 4.9875f, 97.3125f);
+    gameObjects.push_back(new Scenario1(world, player, 0,99.2938f+2.0f));
 }
 
 void Game::run()

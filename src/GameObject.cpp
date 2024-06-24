@@ -46,9 +46,8 @@ void GameObject::update(float dt, sf::RenderWindow& window)
 
 sf::Vector2f GameObject::getPosition()
 {
-    // auto pos = body->GetPosition();
-    // return sf::Vector2f(pos.x, -pos.y);
-    return sf::Vector2f(0, 0);
+    auto pos = body->GetPosition();
+    return sf::Vector2f(pos.x, -pos.y);
 }
 
 // void GameObject::createBody(float px, float py, float halfSizeX, float halfSizeY, b2BodyType type)

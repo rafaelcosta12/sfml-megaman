@@ -1,9 +1,11 @@
 #include "Scenario1.hpp"
 #include <iostream>
 
-Scenario1::Scenario1(b2World* world, float px, float py) : GameObject(world)
+Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameObject(world)
 {
     name = "Scenario1";
+    camera = new Camera(world, player->getPosition().x, player->getPosition().y);
+    this->player = player;
 
     // shape
     sprite = sf::Sprite();
@@ -61,11 +63,21 @@ void Scenario1::createShape()
 
 void Scenario1::update(float dt, sf::RenderWindow& window)
 {
-    
+    player->update(dt, window);
+    camera->update(dt, window);
+    camera->setCenter(player->getPosition());
+}
+
+void Scenario1::processEvents(sf::Event event, sf::RenderWindow &window)
+{
+    player->processEvents(event, window);
+    camera->processEvents(event, window);
 }
 
 void Scenario1::render(sf::RenderWindow& window)
 {
     window.draw(sprite);
+    camera->render(window);
+    player->render(window);
     GameObject::render(window);
 }

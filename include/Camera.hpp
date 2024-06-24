@@ -18,6 +18,7 @@ public:
     ~Camera();
     void render(sf::RenderWindow& window) override;
     void processEvents(sf::Event event, sf::RenderWindow& window) override;
+    void setCenter(sf::Vector2f center);
 };
 
 #endif
