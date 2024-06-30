@@ -16,6 +16,9 @@ protected:
     void createShape();
     Camera* camera;
     Player* player;
+    std::vector<b2Fixture*> fixtures;
+
+    void addGroundFixture(b2Vec2* box);
 public:
     ~Scenario1();
     Scenario1(b2World* world, Player* player, float px, float py);

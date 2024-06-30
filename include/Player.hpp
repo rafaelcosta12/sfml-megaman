@@ -16,7 +16,11 @@ private:
     float restitution;
     float density;
     float size[2];
+    
     float jumpForce;
+
+    float shotSpeed;
+    float shotDelay;
 
     Animation<PlayerAnimation>* animation;
 protected:

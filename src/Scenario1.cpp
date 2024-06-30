@@ -30,35 +30,54 @@ Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameO
     createShape();
 }
 
+void Scenario1::addGroundFixture(b2Vec2 *box)
+{
+    b2Vec2 points[4];
+    for (int i = 0; i < 4; i++)
+    {
+        points[i].Set(box[i].x * 0.05f, -box[i].y * 0.05f);
+        points[i] -= body->GetPosition();
+    }
+    b2PolygonShape dynamicBox;
+    dynamicBox.Set(points, 4);
+    
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &dynamicBox;
+    fixtureDef.friction = 1.0f;
+    fixtureDef.restitution = 0.0f;
+    fixtureDef.density = 100.0f;
+    
+    auto fixture = body->CreateFixture(&fixtureDef);
+    fixtures.push_back(fixture);
+}
+
 Scenario1::~Scenario1()
 {
 }
 
 void Scenario1::createShape()
 {
-    std::vector<sf::Vector2f> vertices({
-        sf::Vector2f(1, 1986),
-        sf::Vector2f(1025, 1986),
-        sf::Vector2f(1025, 2049),
-        sf::Vector2f(1, 2049),
-    });
-
-    b2Vec2 points[vertices.size()];
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        auto v = vertices.at(i);
-        points[i].Set(v.x * 0.05f, -v.y * 0.05f);
-        points[i] -= body->GetPosition();
-    }
-
-    b2PolygonShape dynamicBox;
-    dynamicBox.Set(points, vertices.size());
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &dynamicBox;
-    fixtureDef.friction = 1.0f;
-    fixtureDef.restitution = 0.0f;
-    fixtureDef.density = 100.0f;
-    fixture = body->CreateFixture(&fixtureDef);
+    b2Vec2 box[4];
+    box[0].Set(1, 1985);
+    box[1].Set(1024, 1985);
+    box[2].Set(1024, 2048);
+    box[3].Set(1, 2048);
+    addGroundFixture(box);
+    box[0].Set(257, 1953);
+    box[1].Set(384, 1953);
+    box[2].Set(384, 1985);
+    box[3].Set(257, 1985);
+    addGroundFixture(box);
+    box[0].Set(289, 1922);
+    box[1].Set(384, 1922);
+    box[2].Set(384, 1953);
+    box[3].Set(289, 1953);
+    addGroundFixture(box);
+    box[0].Set(321, 1889);
+    box[1].Set(384, 1889);
+    box[2].Set(384, 1921);
+    box[3].Set(321, 1921);
+    addGroundFixture(box);
 }
 
 void Scenario1::update(float dt, sf::RenderWindow& window)

@@ -14,15 +14,20 @@ private:
     float animTime;
     int animStep;
     T animCurrent;
+    T animLast;
+    float spriteSize;
     std::map<T, std::vector<SpriteDef>> animations;
 public:
-    Animation(std::string filename, T initial, std::map<T, std::vector<SpriteDef>> animations);
+    float offset[2];
+    Animation(std::string filename, float spriteSize, T initial);
     ~Animation();
     void update(float dt, b2Body* body);
     void render(sf::RenderWindow& window);
     void invertX();
+    void setAnimation(T newAnimation, bool reset);
     sf::Vector2f getScale();
-    void setAnimation(T newAnimation);
+    T getLast();
+    void addSprites(PlayerAnimation sprite, int line, std::vector<float> timeSteps);
 };
 
 template class Animation<PlayerAnimation>;

@@ -2,21 +2,27 @@
 #include "Animation.hpp"
 
 template <typename T>
-Animation<T>::Animation(std::string filename, T initial, std::map<T, std::vector<SpriteDef>> animations)
+Animation<T>::Animation(std::string filename, float spriteSize, T initial)
 {
+    offset[0] = 0;
+    offset[1] = 0;
+    
+    animStep = 0;
+    animCurrent = initial;
+    animLast = initial;
+
     texture = new sf::Texture();
     sprite = new sf::Sprite();
 
-    this->animations = animations;
+    this->spriteSize = spriteSize;
+
     if (!texture->loadFromFile(filename))
     {
         std::cout << "Erro ao abrir textura " + filename << std::endl;
     }
+
     sprite->setTexture(*texture, true);
     sprite->scale(sf::Vector2f(-0.05f, 0.05f));
-    sprite->setOrigin(21/2, 24/2);
-
-    setAnimation(initial);
 }
 
 template <typename T>
@@ -40,6 +46,7 @@ void Animation<T>::update(float dt, b2Body* body)
 template <typename T>
 void Animation<T>::render(sf::RenderWindow &window)
 {
+    sprite->setOrigin((spriteSize + offset[0]) / 2, (spriteSize + offset[1]) / 2);
     sprite->setTextureRect(animations[animCurrent].at(animStep).getTextureRect());
     window.draw(*sprite);
 }
@@ -57,10 +64,41 @@ sf::Vector2f Animation<T>::getScale()
 }
 
 template <typename T>
-void Animation<T>::setAnimation(T newAnimation)
+T Animation<T>::getLast()
 {
-    if (animCurrent == newAnimation) return;
+    return animLast;
+}
+
+template <typename T>
+void Animation<T>::addSprites(PlayerAnimation sprite, int line, std::vector<float> timeSteps)
+{
+    std::vector<SpriteDef> sprites;
+    for (int i = 0; i < timeSteps.size(); i++)
+    {
+        sprites.push_back(SpriteDef(sf::IntRect(spriteSize * i, spriteSize * line, spriteSize, spriteSize), timeSteps[i]));
+    }
+    animations.insert({sprite, sprites});
+}
+
+template <typename T>
+void Animation<T>::setAnimation(T newAnimation, bool reset)
+{
+    if (animCurrent == newAnimation)
+        return;
+    
+    animLast = animCurrent;
     animCurrent = newAnimation;
-    animStep = 0;
-    animTime = animations[animCurrent].at(animStep).getTotalTime();
+    
+    auto current = animations[animCurrent];
+    
+    if (current.size() == 0) return;
+
+    if (reset) {
+        animStep = 0;
+        animTime = current.at(0).getTotalTime();
+    }
+    else {
+        animStep = (animStep > current.size() - 1) ? 0 : animStep;
+        animTime = current.at(animStep).getTotalTime();
+    }
 }

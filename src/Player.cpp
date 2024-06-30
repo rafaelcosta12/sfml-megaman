@@ -5,17 +5,16 @@
 
 Player::Player(b2World* world, float px, float py) : GameObject(world)
 {
-    size[0] = 21 * 0.05f / 2;
-    size[1] = 24 * 0.05f / 2;
-
+    size[0] = 0.4f;
+    size[1] = 0.5f;
+    isGrounded = false;
     name = "Player";
-    
     friction = 0.0f;
     restitution = 0.0f;
     density = 10.0f;
-    jumpForce = 14.0f;
-
-    isGrounded = false;
+    jumpForce = 25.0f;
+    shotDelay = 0.0f;
+    shotSpeed = 0.2f;
 
     b2BodyDef bodyDef;
     bodyDef.type = b2BodyType::b2_dynamicBody;
@@ -27,37 +26,14 @@ Player::Player(b2World* world, float px, float py) : GameObject(world)
 
     recreateFixtures();
 
-    // animation
-    auto defs = std::map<PlayerAnimation, std::vector<SpriteDef>>();
-    defs.insert(
-        {
-            PlayerAnimation::IDLE,
-            std::vector<SpriteDef>({
-                SpriteDef(sf::IntRect(3, 21, 21, 24), 2.0f),
-                SpriteDef(sf::IntRect(28, 21, 21, 24), 0.25f),
-            }),
-        }
-    );
-    defs.insert(
-        {
-            PlayerAnimation::WALK,
-            std::vector<SpriteDef>({
-                SpriteDef(sf::IntRect(89, 21, 24, 22), 0.15f),
-                SpriteDef(sf::IntRect(114, 21, 24, 24), 0.1f),
-                SpriteDef(sf::IntRect(141, 21, 24, 24), 0.15f),
-                SpriteDef(sf::IntRect(114, 21, 24, 24), 0.1f),
-            }),
-        }
-    );
-    defs.insert(
-        {
-            PlayerAnimation::JUMP,
-            std::vector<SpriteDef>({
-                SpriteDef(sf::IntRect(174, 13, 27, 30), 1.0f),
-            }),
-        }
-    );
-    animation = new Animation<PlayerAnimation>("../assets/megaman.png", PlayerAnimation::IDLE, defs);
+    animation = new Animation<PlayerAnimation>("../assets/spritesheet_megaman.png", 45, PlayerAnimation::IDLE);
+    animation->addSprites(PlayerAnimation::IDLE, 0, std::vector<float>({2.0f, 0.25f}));
+    animation->addSprites(PlayerAnimation::WALK, 1, std::vector<float>({0.15f, 0.1f, 0.15f}));
+    animation->addSprites(PlayerAnimation::JUMP, 2, std::vector<float>({1.0f}));
+    animation->addSprites(PlayerAnimation::IDLE_SHOT, 3, std::vector<float>({0.5f}));
+    animation->addSprites(PlayerAnimation::WALK_SHOT, 4, std::vector<float>({0.15f, 0.1f, 0.15f}));
+    animation->addSprites(PlayerAnimation::JUMP_SHOT, 5, std::vector<float>({0.5f}));
+    animation->offset[1] = 10.0f;
 }
 
 Player::~Player()
@@ -82,7 +58,6 @@ void Player::update(float dt, sf::RenderWindow& window)
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
     {
-        animation->setAnimation(PlayerAnimation::WALK);
         desiredVelocity = -maxSpeed;
 
         if (animation->getScale().x < 0)
@@ -91,14 +66,9 @@ void Player::update(float dt, sf::RenderWindow& window)
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
     {
         desiredVelocity = maxSpeed;
-        animation->setAnimation(PlayerAnimation::WALK);
         
         if (animation->getScale().x > 0)
             animation->invertX();
-    }
-    else
-    {
-        animation->setAnimation(PlayerAnimation::IDLE);
     }
 
     float velocityChange = desiredVelocity - velocity.x;
@@ -112,13 +82,37 @@ void Player::update(float dt, sf::RenderWindow& window)
         body->SetLinearVelocity(b2Vec2((body->GetLinearVelocity().x > 0 ? maxSpeed : -maxSpeed), body->GetLinearVelocity().y));
 
     // pulo
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) && isGrounded)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::J) && isGrounded)
         body->ApplyLinearImpulse(b2Vec2(0, jumpForce), body->GetWorldCenter(), true);
     
-    if (!isGrounded)
-        animation->setAnimation(PlayerAnimation::JUMP);
+    if (shotDelay > 0)
+        shotDelay -= dt;
     
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K))
+        shotDelay = shotSpeed;
+
     // animation
+    bool moving = desiredVelocity != 0;
+    bool jumping = !isGrounded;
+    bool shoting = shotDelay > 0;
+    
+    if (shoting)
+        if (jumping)
+            animation->setAnimation(PlayerAnimation::JUMP_SHOT, false);
+        else
+        if (moving)
+            animation->setAnimation(PlayerAnimation::WALK_SHOT, false);
+        else
+            animation->setAnimation(PlayerAnimation::IDLE_SHOT, false);
+    else
+    if (jumping)
+        animation->setAnimation(PlayerAnimation::JUMP, false);
+    else
+    if (moving)
+        animation->setAnimation(PlayerAnimation::WALK, false);
+    else
+        animation->setAnimation(PlayerAnimation::IDLE, false);
+
     animation->update(dt, body);
 }
 
@@ -138,6 +132,8 @@ void Player::render(sf::RenderWindow& window)
     ImGui::SliderFloat("Restitution", &restitution, 0, 1);
     ImGui::InputFloat("Density", &density, 0, 10000000.f);
     ImGui::SliderFloat("Jump Force", &jumpForce, 0, 50);
+    ImGui::InputFloat2("Body Size", size);
+    ImGui::SliderFloat2("Sprite Offset", animation->offset, -45, 45);
     bool applyPhysics = ImGui::Button("Apply");
     ImGui::End();
 
