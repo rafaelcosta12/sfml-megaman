@@ -5,7 +5,6 @@
 Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameObject(world)
 {
     name = "Scenario1";
-    camera = new Camera(world, player->getPosition().x, player->getPosition().y);
     this->player = player;
 
     // shape
@@ -20,11 +19,15 @@ Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameO
     sprite.setPosition(0, 0);
     sprite.scale(sf::Vector2f(0.05f, 0.05f));
 
+    // area
     area1.setPosition(0, 1793 * 0.05f);
     area1.setSize(sf::Vector2f(1024 * 0.05f, 257 * 0.05f));
     area1.setFillColor(sf::Color::Transparent);
     area1.setOutlineColor(sf::Color::Red);
     area1.setOutlineThickness(0.1);
+
+    camera = new Camera(world, player, sf::Vector2f(7.0f, 97.0f));
+    camera->setBounds(area1.getGlobalBounds());
 
     // physics
     b2BodyDef bodyDef;
@@ -91,7 +94,6 @@ void Scenario1::update(float dt, sf::RenderWindow& window)
 {
     player->update(dt, window);
     camera->update(dt, window);
-    camera->setCenter(player->getPosition());
 }
 
 void Scenario1::processEvents(sf::Event event, sf::RenderWindow &window)

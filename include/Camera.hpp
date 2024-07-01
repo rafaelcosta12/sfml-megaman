@@ -4,23 +4,32 @@
 #include <box2d/box2d.h>
 #include <SFML/Graphics.hpp>
 #include "GameObject.hpp"
+#include "Player.hpp"
 
 class Camera : public GameObject
 {
 private:
-    float ratio;
-    float position[2];
-    float size[2];
+    // main camera
     float offset[2];
-    float freeCamVelocity;
+    sf::Vector2f size;
+    sf::View view;
+    sf::FloatRect bounds;
+    // free camera
     bool freeCam;
-    sf::View exploreView;
+    float freeCamVelocity;
+    float freeCamRatio;
+    sf::Vector2f freeCamSize;
+    sf::View freeCamView;
+    //
+    Player* player;
 public:
-    Camera(b2World* world, float px, float py);
+    Camera(b2World* world, Player* player, sf::Vector2f spawn);
     ~Camera();
     void render(sf::RenderWindow& window) override;
+    void update(float dt, sf::RenderWindow& window) override;
     void processEvents(sf::Event event, sf::RenderWindow& window) override;
-    void setCenter(sf::Vector2f center);
+    void renderImgui();
+    void setBounds(sf::FloatRect bounds);
 };
 
 #endif

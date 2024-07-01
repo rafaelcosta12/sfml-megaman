@@ -5,14 +5,14 @@
 
 Player::Player(b2World* world, float px, float py) : GameObject(world)
 {
+    name = "Player";
     size[0] = 0.4f;
     size[1] = 0.5f;
     isGrounded = false;
-    name = "Player";
     friction = 0.0f;
     restitution = 0.0f;
     density = 10.0f;
-    jumpForce = 25.0f;
+    jumpForce = 30.0f;
     shotDelay = 0.0f;
     shotSpeed = 0.2f;
 
