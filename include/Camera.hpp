@@ -11,8 +11,10 @@ private:
     float ratio;
     float position[2];
     float size[2];
+    float offset[2];
     float freeCamVelocity;
     bool freeCam;
+    sf::View exploreView;
 public:
     Camera(b2World* world, float px, float py);
     ~Camera();

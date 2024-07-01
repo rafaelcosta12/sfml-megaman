@@ -1,4 +1,5 @@
 #include "Scenario1.hpp"
+#include "imgui.h"
 #include <iostream>
 
 Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameObject(world)
@@ -18,6 +19,12 @@ Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameO
     sprite.setTexture(texture, true);
     sprite.setPosition(0, 0);
     sprite.scale(sf::Vector2f(0.05f, 0.05f));
+
+    area1.setPosition(0, 1793 * 0.05f);
+    area1.setSize(sf::Vector2f(1024 * 0.05f, 257 * 0.05f));
+    area1.setFillColor(sf::Color::Transparent);
+    area1.setOutlineColor(sf::Color::Red);
+    area1.setOutlineThickness(0.1);
 
     // physics
     b2BodyDef bodyDef;
@@ -96,7 +103,27 @@ void Scenario1::processEvents(sf::Event event, sf::RenderWindow &window)
 void Scenario1::render(sf::RenderWindow& window)
 {
     window.draw(sprite);
+    window.draw(area1);
     camera->render(window);
     player->render(window);
     GameObject::render(window);
+
+    bool changed = false;
+    float area1Size[2];
+    float area1Position[2];
+
+    area1Size[0] = area1.getSize().x;
+    area1Size[1] = area1.getSize().y;
+    area1Position[0] = area1.getPosition().x;
+    area1Position[1] = area1.getPosition().y;
+
+    ImGui::Begin("Scenario");
+    ImGui::InputFloat2("Area1 Size", area1Size);
+    ImGui::InputFloat2("Area1 Position", area1Position);
+    ImGui::End();
+
+    // if (changed) {
+        area1.setSize(sf::Vector2f(area1Size[0], area1Size[1]));
+        area1.setPosition(sf::Vector2f(area1Position[0], area1Position[1]));
+    // }
 }

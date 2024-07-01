@@ -17,6 +17,7 @@ protected:
     Camera* camera;
     Player* player;
     std::vector<b2Fixture*> fixtures;
+    sf::RectangleShape area1;
 
     void addGroundFixture(b2Vec2* box);
 public:
