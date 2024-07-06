@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "GameObject.hpp"
 #include "Animation.hpp"
+#include "BasicShot.hpp"
+#include <vector>
 
 class Player : public GameObject, public b2ContactListener
 {
@@ -23,6 +25,7 @@ private:
     float shotDelay;
 
     Animation<PlayerAnimation>* animation;
+    std::vector<BasicShot*> projectiles;
 protected:
     void recreateFixtures();
 public:

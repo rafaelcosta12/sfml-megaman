@@ -1,0 +1,1 @@
+enum class BasicShotEnum { ON };

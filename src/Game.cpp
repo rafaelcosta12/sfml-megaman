@@ -9,7 +9,7 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
-Game::Game() : window(sf::VideoMode(800, 600), "Example")
+Game::Game() : window(sf::VideoMode(800 * 2, 600 * 2), "Example")
 {
     srand(static_cast<unsigned int>(time(0)));
     window.setFramerateLimit(60);

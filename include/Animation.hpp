@@ -4,6 +4,7 @@
 #include <box2d/box2d.h>
 #include "SpriteDef.hpp"
 #include "PlayerAnimation.hpp"
+#include "ShotAnimations.hpp"
 
 template <typename T>
 class Animation
@@ -27,9 +28,10 @@ public:
     void setAnimation(T newAnimation, bool reset);
     sf::Vector2f getScale();
     T getLast();
-    void addSprites(PlayerAnimation sprite, int line, std::vector<float> timeSteps);
+    void addSprites(T sprite, int line, std::vector<float> timeSteps);
 };
 
 template class Animation<PlayerAnimation>;
+template class Animation<BasicShotEnum>;
 
 #endif

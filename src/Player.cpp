@@ -14,7 +14,7 @@ Player::Player(b2World* world, float px, float py) : GameObject(world)
     density = 10.0f;
     jumpForce = 30.0f;
     shotDelay = 0.0f;
-    shotSpeed = 0.2f;
+    shotSpeed = 0.1f;
 
     b2BodyDef bodyDef;
     bodyDef.type = b2BodyType::b2_dynamicBody;
@@ -34,6 +34,8 @@ Player::Player(b2World* world, float px, float py) : GameObject(world)
     animation->addSprites(PlayerAnimation::WALK_SHOT, 4, std::vector<float>({0.15f, 0.1f, 0.15f}));
     animation->addSprites(PlayerAnimation::JUMP_SHOT, 5, std::vector<float>({0.5f}));
     animation->offset[1] = 10.0f;
+
+    projectiles = std::vector<BasicShot*>();
 }
 
 Player::~Player()
@@ -45,6 +47,21 @@ void Player::processEvents(sf::Event event, sf::RenderWindow& window)
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
         sf::Vector2f position = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+    }
+
+    if (event.type == sf::Event::KeyReleased)
+    {
+        if (event.key.code == sf::Keyboard::K && shotDelay <= 0)
+        {
+            shotDelay = shotSpeed;
+            projectiles.push_back(new BasicShot(world, getPosition(), animation->getScale().x < 0));
+        }
+    }
+
+    // update projectiles
+    for (auto shot : projectiles)
+    {
+        shot->processEvents(event, window);
     }
 }
 
@@ -88,9 +105,6 @@ void Player::update(float dt, sf::RenderWindow& window)
     if (shotDelay > 0)
         shotDelay -= dt;
     
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K))
-        shotDelay = shotSpeed;
-
     // animation
     bool moving = desiredVelocity != 0;
     bool jumping = !isGrounded;
@@ -114,6 +128,12 @@ void Player::update(float dt, sf::RenderWindow& window)
         animation->setAnimation(PlayerAnimation::IDLE, false);
 
     animation->update(dt, body);
+
+    // update projectiles
+    for (auto shot : projectiles)
+    {
+        shot->update(dt, window);
+    }
 }
 
 void Player::render(sf::RenderWindow& window)
@@ -122,6 +142,11 @@ void Player::render(sf::RenderWindow& window)
     animation->render(window);
 
     GameObject::render(window);
+
+    for (auto shot : projectiles)
+    {
+        shot->render(window);
+    }
 
     // imgui
     auto pos = body->GetPosition();
@@ -132,6 +157,7 @@ void Player::render(sf::RenderWindow& window)
     ImGui::SliderFloat("Restitution", &restitution, 0, 1);
     ImGui::InputFloat("Density", &density, 0, 10000000.f);
     ImGui::SliderFloat("Jump Force", &jumpForce, 0, 50);
+    ImGui::SliderFloat("Shot Speed", &shotSpeed, 0, 1);
     ImGui::InputFloat2("Body Size", size);
     ImGui::SliderFloat2("Sprite Offset", animation->offset, -45, 45);
     bool applyPhysics = ImGui::Button("Apply");

@@ -15,6 +15,7 @@ add_executable(Example
     src/Camera.cpp
     src/SpriteDef.cpp
     src/Animation.cpp
+    src/BasicShot.cpp
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
     imgui/imgui_draw.cpp

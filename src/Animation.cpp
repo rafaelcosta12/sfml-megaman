@@ -70,7 +70,7 @@ T Animation<T>::getLast()
 }
 
 template <typename T>
-void Animation<T>::addSprites(PlayerAnimation sprite, int line, std::vector<float> timeSteps)
+void Animation<T>::addSprites(T sprite, int line, std::vector<float> timeSteps)
 {
     std::vector<SpriteDef> sprites;
     for (int i = 0; i < timeSteps.size(); i++)
