@@ -38,6 +38,9 @@ Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameO
     
     // shape
     createShape();
+
+    // enemies
+    objects.push_back(new Enemy1(world, sf::Vector2f(5.0f, 97.3125f)));
 }
 
 void Scenario1::addGroundFixture(b2Vec2 *box)
@@ -94,20 +97,29 @@ void Scenario1::update(float dt, sf::RenderWindow& window)
 {
     player->update(dt, window);
     camera->update(dt, window);
+    for (auto o : objects)
+        o->update(dt, window);
 }
 
 void Scenario1::processEvents(sf::Event event, sf::RenderWindow &window)
 {
     player->processEvents(event, window);
     camera->processEvents(event, window);
+    for (auto o : objects)
+        o->processEvents(event, window);
 }
 
 void Scenario1::render(sf::RenderWindow& window)
 {
     window.draw(sprite);
     window.draw(area1);
+    
     camera->render(window);
     player->render(window);
+
+    for (auto o : objects)
+        o->render(window);
+    
     GameObject::render(window);
 
     bool changed = false;

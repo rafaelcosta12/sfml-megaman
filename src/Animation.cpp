@@ -70,6 +70,12 @@ T Animation<T>::getLast()
 }
 
 template <typename T>
+T Animation<T>::getCurrent()
+{
+    return animCurrent;
+}
+
+template <typename T>
 void Animation<T>::addSprites(T sprite, int line, std::vector<float> timeSteps)
 {
     std::vector<SpriteDef> sprites;

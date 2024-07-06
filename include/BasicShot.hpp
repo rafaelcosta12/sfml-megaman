@@ -10,10 +10,12 @@ private:
     float speed;
     b2Fixture* fixture;
     Animation<BasicShotEnum>* animation;
+    
+    void createBody(sf::Vector2f spanwPosition, bool lookingRight);
 public:
     BasicShot(b2World* world, sf::Vector2f spanwPosition, bool lookingRight);
     ~BasicShot();
-    void processEvents(sf::Event event, sf::RenderWindow& window) override;
+    void processEvents(sf::Event event, sf::RenderWindow &window) override;
     void update(float dt, sf::RenderWindow& window) override;
     void render(sf::RenderWindow& window) override;
 };

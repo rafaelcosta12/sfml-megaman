@@ -13,6 +13,7 @@ public:
     std::string name = "unknow";
     GameObject(b2World* world);
     ~GameObject();
+    
     virtual void processEvents(sf::Event event, sf::RenderWindow& window);
     virtual void update(float dt, sf::RenderWindow& window);
     virtual void render(sf::RenderWindow& window);

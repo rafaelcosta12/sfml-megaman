@@ -1,0 +1,1 @@
+enum class Enemy1AnimationEnum { GUARD, READY, WALK };

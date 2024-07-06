@@ -16,6 +16,7 @@ add_executable(Example
     src/SpriteDef.cpp
     src/Animation.cpp
     src/BasicShot.cpp
+    src/Enemy1.cpp
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
     imgui/imgui_draw.cpp

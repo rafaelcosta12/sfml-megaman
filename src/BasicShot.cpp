@@ -26,12 +26,11 @@ BasicShot::BasicShot(b2World* world, sf::Vector2f spanwPosition, bool lookingRig
     fixture = body->CreateFixture(&fixtureDef);
 }
 
-BasicShot::~BasicShot() {}
+BasicShot::~BasicShot()
+{}
 
 void BasicShot::processEvents(sf::Event event, sf::RenderWindow& window)
-{
-    
-}
+{}
 
 void BasicShot::update(float dt, sf::RenderWindow& window)
 {

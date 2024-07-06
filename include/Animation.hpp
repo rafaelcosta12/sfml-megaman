@@ -5,6 +5,7 @@
 #include "SpriteDef.hpp"
 #include "PlayerAnimation.hpp"
 #include "ShotAnimations.hpp"
+#include "EnemiesAnimations.hpp"
 
 template <typename T>
 class Animation
@@ -28,10 +29,12 @@ public:
     void setAnimation(T newAnimation, bool reset);
     sf::Vector2f getScale();
     T getLast();
+    T getCurrent();
     void addSprites(T sprite, int line, std::vector<float> timeSteps);
 };
 
 template class Animation<PlayerAnimation>;
 template class Animation<BasicShotEnum>;
+template class Animation<Enemy1AnimationEnum>;
 
 #endif
