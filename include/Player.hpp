@@ -7,7 +7,7 @@
 #include "BasicShot.hpp"
 #include <vector>
 
-class Player : public GameObject, public b2ContactListener
+class Player : public GameObject
 {
 private:    
     b2Fixture* groundSensorFixture = NULL;
@@ -31,15 +31,11 @@ protected:
 public:
     Player(b2World* world, float px, float py);
     ~Player();
-    // game object
     void processEvents(sf::Event event, sf::RenderWindow& window) override;
     void update(float dt, sf::RenderWindow& window) override;
     void render(sf::RenderWindow& window) override;
-    // contact listener
-    void BeginContact(b2Contact* contact) override;
-    void EndContact(b2Contact* contact) override;
-    void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
-    void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
+    void beginContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture) override;
+    void endContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture) override;
 };
 
 #endif

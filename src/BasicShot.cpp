@@ -2,6 +2,9 @@
 
 BasicShot::BasicShot(b2World* world, sf::Vector2f spanwPosition, bool lookingRight) : GameObject(world)
 {
+    name = "Basic Shot";
+    tag = Tag::PlayerBullet;
+    
     float side = lookingRight ? 1 : -1;
     damage = 10;
     speed = 10 * side;

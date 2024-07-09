@@ -6,6 +6,8 @@
 Player::Player(b2World* world, float px, float py) : GameObject(world)
 {
     name = "Player";
+    tag = Tag::Player;
+
     size[0] = 0.4f;
     size[1] = 0.5f;
     isGrounded = false;
@@ -22,7 +24,6 @@ Player::Player(b2World* world, float px, float py) : GameObject(world)
     bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
     bodyDef.fixedRotation = true;
     body = world->CreateBody(&bodyDef);
-    world->SetContactListener(this);
 
     recreateFixtures();
 
@@ -170,6 +171,30 @@ void Player::render(sf::RenderWindow& window)
     }
 }
 
+void Player::beginContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture)
+{
+    if (fixture == groundSensorFixture)
+    {
+        if (other->tag == Tag::Scenario)
+            isGrounded = true;
+    }
+
+    if (other->tag == Tag::Enemy)
+    {
+        std::cout << "Contact with enemy" << std::endl;
+        animation->setAnimation(PlayerAnimation::IDLE, true);
+    }
+}
+
+void Player::endContact(GameObject *other, b2Fixture *fixture, b2Fixture *otherFixture)
+{
+    if (fixture == groundSensorFixture)
+    {
+        if (other->tag == Tag::Scenario)
+            isGrounded = false;
+    }
+}
+
 void Player::recreateFixtures()
 {
     body->DestroyFixture(shapeFixture);
@@ -193,39 +218,4 @@ void Player::recreateFixtures()
     groundSensorFixtureDef.shape = &groundSensorShape;
     groundSensorFixtureDef.isSensor = true;
     groundSensorFixture = body->CreateFixture(&groundSensorFixtureDef);
-}
-
-void Player::BeginContact(b2Contact* contact)
-{
-    b2Fixture* fixtureA = contact->GetFixtureA();
-    b2Fixture* fixtureB = contact->GetFixtureB();
-
-    if (fixtureA == groundSensorFixture || fixtureB == groundSensorFixture)
-    {
-        auto k = reinterpret_cast<GameObject*>(fixtureA->GetBody()->GetUserData().pointer);
-        auto p = reinterpret_cast<GameObject*>(fixtureB->GetBody()->GetUserData().pointer);
-        
-        isGrounded = true;
-    }
-}
-
-void Player::EndContact(b2Contact* contact)
-{
-    b2Fixture* fixtureA = contact->GetFixtureA();
-    b2Fixture* fixtureB = contact->GetFixtureB();
-
-    if (fixtureA == groundSensorFixture || fixtureB == groundSensorFixture)
-    {
-        auto k = reinterpret_cast<GameObject*>(fixtureA->GetBody()->GetUserData().pointer);
-        auto p = reinterpret_cast<GameObject*>(fixtureB->GetBody()->GetUserData().pointer);
-        isGrounded = false;
-    }
-}
-
-void Player::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
-{
-}
-
-void Player::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
-{
 }

@@ -5,7 +5,13 @@
 Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameObject(world)
 {
     name = "Scenario1";
+    this->tag = Tag::Scenario;
     this->player = player;
+    
+    for (int i = 0; i < 32; i++)
+    {
+        enemies[i] = nullptr;
+    }
 
     // shape
     sprite = sf::Sprite();
@@ -40,7 +46,7 @@ Scenario1::Scenario1(b2World* world, Player* player, float px, float py) : GameO
     createShape();
 
     // enemies
-    objects.push_back(new Enemy1(world, sf::Vector2f(5.0f, 97.3125f)));
+    enemies[0] = new Met(world, sf::Vector2f(5.0f, 97.3125f));
 }
 
 void Scenario1::addGroundFixture(b2Vec2 *box)
@@ -97,16 +103,32 @@ void Scenario1::update(float dt, sf::RenderWindow& window)
 {
     player->update(dt, window);
     camera->update(dt, window);
-    for (auto o : objects)
-        o->update(dt, window);
+    
+    for (int i = 0; i < 32; i++)
+    {
+        if (enemies[i] == nullptr)
+            continue;
+        
+        enemies[i]->update(dt, window);
+        
+        if (enemies[i]->isDeath())
+        {
+            enemies[i]->destroy();
+            enemies[i] = nullptr;
+        }
+    }
 }
 
 void Scenario1::processEvents(sf::Event event, sf::RenderWindow &window)
 {
     player->processEvents(event, window);
     camera->processEvents(event, window);
-    for (auto o : objects)
-        o->processEvents(event, window);
+    
+    for (int i = 0; i < ENEMIES_ARRAY_SIZE; i++)
+    {
+        if (enemies[i] == nullptr) continue;
+        enemies[i]->processEvents(event, window);
+    }
 }
 
 void Scenario1::render(sf::RenderWindow& window)
@@ -117,12 +139,14 @@ void Scenario1::render(sf::RenderWindow& window)
     camera->render(window);
     player->render(window);
 
-    for (auto o : objects)
-        o->render(window);
+    for (int i = 0; i < ENEMIES_ARRAY_SIZE; i++)
+    {
+        if (enemies[i] == nullptr) continue;
+        enemies[i]->render(window);
+    }
     
     GameObject::render(window);
 
-    bool changed = false;
     float area1Size[2];
     float area1Position[2];
 
@@ -136,8 +160,6 @@ void Scenario1::render(sf::RenderWindow& window)
     ImGui::InputFloat2("Area1 Position", area1Position);
     ImGui::End();
 
-    // if (changed) {
-        area1.setSize(sf::Vector2f(area1Size[0], area1Size[1]));
-        area1.setPosition(sf::Vector2f(area1Position[0], area1Position[1]));
-    // }
+    area1.setSize(sf::Vector2f(area1Size[0], area1Size[1]));
+    area1.setPosition(sf::Vector2f(area1Position[0], area1Position[1]));
 }

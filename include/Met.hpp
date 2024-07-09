@@ -4,12 +4,12 @@
 #include <SFML/Graphics.hpp>
 #include "GameObject.hpp"
 #include "Animation.hpp"
+#include "enemies/Enemy.hpp"
 
-class Enemy1 : public GameObject
+class Met : public Enemy
 {
 private:
-    float damage;
-    float moveSpeed;
+    float cooldown = 0;
     
     float guardTimeout;
     float guardTime = 0;
@@ -19,16 +19,17 @@ private:
 
     float walkTimeout;
     float walkTime  = 0;
-    
-    Animation<Enemy1AnimationEnum>* animation;
+
     b2Fixture* fixture;
 public:
-    Enemy1(b2World *world, sf::Vector2f spawnPosition);
-    ~Enemy1();
+    Met(b2World *world, sf::Vector2f spawnPosition);
+    ~Met();
 
     void processEvents(sf::Event event, sf::RenderWindow& window) override;
     void update(float dt, sf::RenderWindow& window) override;
     void render(sf::RenderWindow& window) override;
+    void beginContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture) override;
+    void endContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture) override;
 };
 
 #endif

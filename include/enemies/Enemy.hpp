@@ -1,29 +1,26 @@
-#ifndef GAME_OBJECT_HPP
-#define GAME_OBJECT_HPP
+#ifndef ENEMY_HPP
+#define ENEMY_HPP
+#include "GameObject.hpp"
+#include "Animation.hpp"
 
-#include <box2d/box2d.h>
-#include <SFML/Graphics.hpp>
-
-enum class Tag { Any, Player, Scenario, Enemy, PlayerBullet };
-
-class GameObject
+class Enemy : public GameObject
 {
 protected:
-    b2World* world;
-    b2Body* body = NULL;
+    float damage;
+    float moveSpeed;
+    float hp;
+
+    Animation<Enemy1AnimationEnum>* animation;
 public:
-    std::string name = "unknow";
-    Tag tag;
-    
-    GameObject(b2World* world);
-    ~GameObject();
-    
+    Enemy(b2World* world, sf::Vector2f spawnPosition);
+    ~Enemy();
     virtual void processEvents(sf::Event event, sf::RenderWindow& window);
     virtual void update(float dt, sf::RenderWindow& window);
     virtual void render(sf::RenderWindow& window);
-    virtual sf::Vector2f getPosition();
     virtual void beginContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture);
     virtual void endContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture);
+    virtual bool isDeath();
+    virtual void destroy();
 };
 
 #endif

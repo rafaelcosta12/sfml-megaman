@@ -1,10 +1,13 @@
-#include "Enemy1.hpp"
+#include "Met.hpp"
 #include "imgui.h"
+#include <iostream>
 
-Enemy1::Enemy1(b2World *world, sf::Vector2f spawnPosition) : GameObject(world)
+Met::Met(b2World *world, sf::Vector2f spawnPosition) : Enemy(world, spawnPosition)
 {
-    name = "Enemy";
+    name = "Met (Enemy)";
+    tag = Tag::Enemy;
     damage = 10;
+    hp = 30;
     moveSpeed = 1.5;
 
     guardTimeout = 2;
@@ -35,15 +38,18 @@ Enemy1::Enemy1(b2World *world, sf::Vector2f spawnPosition) : GameObject(world)
     fixture = body->CreateFixture(&fixtureDef);
 }
 
-Enemy1::~Enemy1()
+Met::~Met()
 {}
 
-void Enemy1::processEvents(sf::Event event, sf::RenderWindow& window)
+void Met::processEvents(sf::Event event, sf::RenderWindow& window)
 {
 }
 
-void Enemy1::update(float dt, sf::RenderWindow& window)
+void Met::update(float dt, sf::RenderWindow& window)
 {
+    if (cooldown > 0)
+        cooldown -= dt;
+
     auto linearVelocity = body->GetLinearVelocity();
     linearVelocity.x = 0;
 
@@ -88,19 +94,26 @@ void Enemy1::update(float dt, sf::RenderWindow& window)
     animation->update(dt, body);
 }
 
-void Enemy1::render(sf::RenderWindow& window)
+void Met::render(sf::RenderWindow& window)
 {
-    animation->render(window);
-    GameObject::render(window);
+    Enemy::render(window);
 
-    // imgui
-    auto pos = body->GetPosition();
-    ImGui::Begin("Enemy 1");
-    ImGui::Text("Position: (%.3f, %.3f)", pos.x, -pos.y);
-    ImGui::InputFloat("Move Speed", &moveSpeed);
-    ImGui::InputFloat("Damage", &damage);
+    ImGui::Begin(name.c_str());
     ImGui::InputFloat("Guard Timeout", &guardTimeout);
     ImGui::InputFloat("Ready Timeout", &readyTimeout);
     ImGui::InputFloat("Walk Timeout", &walkTimeout);
     ImGui::End();
+}
+
+void Met::beginContact(GameObject *other, b2Fixture *fixture, b2Fixture *otherFixture)
+{
+    if (other->tag == Tag::PlayerBullet)
+    {
+        hp -= 10;
+        std::cout << "Enemy takes damage: HP " << hp << std::endl;
+    }
+}
+
+void Met::endContact(GameObject *other, b2Fixture *fixture, b2Fixture *otherFixture)
+{
 }

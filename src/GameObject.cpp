@@ -5,6 +5,7 @@
 GameObject::GameObject(b2World* world)
 {
     this->world = world;
+    tag = Tag::Any;
 }
 
 GameObject::~GameObject()
@@ -50,21 +51,10 @@ sf::Vector2f GameObject::getPosition()
     return sf::Vector2f(pos.x, -pos.y);
 }
 
-// void GameObject::createBody(float px, float py, float halfSizeX, float halfSizeY, b2BodyType type)
-// {
-//     // physics
-//     b2BodyDef bodyDef;
-//     bodyDef.type = type;
-//     bodyDef.position.Set(px, -py);
-//     bodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
-//     body = world->CreateBody(&bodyDef);
-    
-//     if (type == b2BodyType::b2_staticBody)
-//     {
-//         b2PolygonShape dynamicBox;
-//         dynamicBox.SetAsBox(halfSizeX, halfSizeY);
-//         b2FixtureDef fixtureDef;
-//         fixtureDef.shape = &dynamicBox;
-//         body->CreateFixture(&fixtureDef);
-//     }
-// }
+void GameObject::beginContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture)
+{
+}
+
+void GameObject::endContact(GameObject* other, b2Fixture* fixture, b2Fixture* otherFixture)
+{
+}

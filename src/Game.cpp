@@ -19,6 +19,10 @@ Game::Game() : window(sf::VideoMode(800 * 2, 600 * 2), "Example")
 
     auto player = new Player(world, 4.9875f, 97.3125f);
     gameObjects.push_back(new Scenario1(world, player, 0,99.2938f+2.0f));
+
+    contactHandler = new ContactsHandler();
+    world->SetContactListener(contactHandler);
+    world->SetContactFilter(contactHandler);
 }
 
 void Game::run()

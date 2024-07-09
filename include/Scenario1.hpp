@@ -6,7 +6,10 @@
 #include "GameObject.hpp"
 #include "Camera.hpp"
 #include "Player.hpp"
-#include "Enemy1.hpp"
+#include "Met.hpp"
+#include "Enemy.hpp"
+
+#define ENEMIES_ARRAY_SIZE 32
 
 class Scenario1 : public GameObject
 {
@@ -18,7 +21,7 @@ protected:
     Player* player;
     std::vector<b2Fixture*> fixtures;
     sf::RectangleShape area1;
-    std::vector<GameObject*> objects;
+    Enemy* enemies[ENEMIES_ARRAY_SIZE];
 
     void addGroundFixture(b2Vec2* box);
     void createShape();

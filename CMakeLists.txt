@@ -16,7 +16,9 @@ add_executable(Example
     src/SpriteDef.cpp
     src/Animation.cpp
     src/BasicShot.cpp
-    src/Enemy1.cpp
+    src/Met.cpp
+    src/ContactsHandler.cpp
+    src/enemies/Enemy.cpp
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
     imgui/imgui_draw.cpp
@@ -26,7 +28,7 @@ add_executable(Example
 )
 
 # Adiciona o caminho para os arquivos de cabeçalho
-target_include_directories(Example PRIVATE include PRIVATE imgui PRIVATE imgui/backends PRIVATE imgui_sfml PRIVATE assets)
+target_include_directories(Example PRIVATE include PRIVATE include/enemies PRIVATE imgui PRIVATE imgui/backends PRIVATE imgui_sfml PRIVATE assets)
 
 # Adiciona as bibliotecas SFML
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
